@@ -1,11 +1,10 @@
 package prices
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/sikehish/Go-Price-Calculator/conversion"
+	"github.com/sikehish/Go-Price-Calculator/filemanager"
 )
 
 type TaxIncludedPriceJob struct {
@@ -37,32 +36,15 @@ func (job *TaxIncludedPriceJob) Process() {
 }
 
 func (job *TaxIncludedPriceJob) LoadData() {
-	pricesFile, err := os.Open("prices.txt")
+
+	lines, err := filemanager.ReadLines("prices.txt")
 
 	if err != nil {
-		fmt.Println("Could not open file!")
 		fmt.Println(err)
 		return
 	}
 
-	scanner := bufio.NewScanner(pricesFile)
-
-	var lines []string
-
-	for scanner.Scan() { //It'll iterate as long scanner.Scan() returns true.It returns false when the scan stops, either by reaching the end of the input or an error.
-		lines = append(lines, scanner.Text())
-	}
-
-	err = scanner.Err() //After Scan returns false, the Err method will return any error that occurred during scanning, except that if it was io.EOF, Err will return nil.
-
-	if err != nil {
-		fmt.Println("Reading the file content failed")
-		fmt.Println(err)
-		pricesFile.Close()
-		return
-	}
-
-	//We wrap the below logic in a new function under conversion package
+	//We wrap the below logic in a new function(Strings to Float) under conversion package
 	// priceData := make([]float64, len(lines))
 	// for idx, price := range lines {
 	// 	floatPrice, err := strconv.ParseFloat(price, 64)
@@ -77,15 +59,13 @@ func (job *TaxIncludedPriceJob) LoadData() {
 	// job.InputPrices = priceData
 	// pricesFile.Close()
 
-	pricesData, err := conversion.StringsToFloat(lines)
+	priceData, err := conversion.StringsToFloat(lines)
 
 	if err != nil {
 		fmt.Println(err)
-		pricesFile.Close()
 		return
 	}
 
 	job.InputPrices = priceData
-	pricesFile.Close()
 
 }
