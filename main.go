@@ -39,7 +39,6 @@ func main() {
 		// pricesJob := prices.NewTaxIncludedPriceJob(cmdm, taxRate)
 
 		err := pricesJob.Process()
-
 		if err != nil {
 			fmt.Println("Could not process job: ", err)
 		}
