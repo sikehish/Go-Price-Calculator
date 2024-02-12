@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/sikehish/Go-Price-Calculator/conversion"
 )
 
 type TaxIncludedPriceJob struct {
@@ -20,17 +22,21 @@ func NewTaxIncludedPriceJob(taxRate float64) *TaxIncludedPriceJob {
 	}
 }
 
-func (job TaxIncludedPriceJob) Process() {
-	result := make(map[string]float64)
+func (job *TaxIncludedPriceJob) Process() {
+
+	job.LoadData()
+
+	result := make(map[string]string)
 
 	for _, price := range job.InputPrices {
-		result[fmt.Sprintf("%v", price)] = price + price*job.TaxRate
+		taxIncludedPrice := price + price*job.TaxRate
+		result[fmt.Sprintf("%v", price)] = fmt.Sprintf("%.2f", taxIncludedPrice) //we're storing in string format as opposed to using float64 only so that we can elimnate the redundant decimal places
 	}
 
 	fmt.Println(job.TaxRate, result)
 }
 
-func (job TaxIncludedPriceJob) LoadData() {
+func (job *TaxIncludedPriceJob) LoadData() {
 	pricesFile, err := os.Open("prices.txt")
 
 	if err != nil {
@@ -55,5 +61,31 @@ func (job TaxIncludedPriceJob) LoadData() {
 		pricesFile.Close()
 		return
 	}
+
+	//We wrap the below logic in a new function under conversion package
+	// priceData := make([]float64, len(lines))
+	// for idx, price := range lines {
+	// 	floatPrice, err := strconv.ParseFloat(price, 64)
+	// if err != nil {
+	// 	fmt.Println("Converting price to float failed")
+	// 	fmt.Println(err)
+	// 	pricesFile.Close()
+	// 	return
+	// }
+	// 	priceData[idx] = floatPrice
+	// }
+	// job.InputPrices = priceData
+	// pricesFile.Close()
+
+	pricesData, err := conversion.StringsToFloat(lines)
+
+	if err != nil {
+		fmt.Println(err)
+		pricesFile.Close()
+		return
+	}
+
+	job.InputPrices = priceData
+	pricesFile.Close()
 
 }
