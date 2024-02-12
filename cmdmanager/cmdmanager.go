@@ -17,7 +17,7 @@ func (cmd CMDManager) ReadLines() ([]string, error) {
 	var prices []string
 	for { //Infinite for loop
 		var price string
-		fmt.Println("Price: ")
+		fmt.Print("Price: ")
 		fmt.Scan(&price)
 
 		if price == "0" {

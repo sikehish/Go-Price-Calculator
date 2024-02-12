@@ -4,22 +4,22 @@ import (
 	"fmt"
 
 	"github.com/sikehish/Go-Price-Calculator/conversion"
-	"github.com/sikehish/Go-Price-Calculator/filemanager"
+	"github.com/sikehish/Go-Price-Calculator/iomanager"
 )
 
 type TaxIncludedPriceJob struct {
-	IOManager         filemanager.FileManager `json:"-"`
-	TaxRate           float64                 `json:"tax_rate"`
-	InputPrices       []float64               `json:"input_prices"`
-	TaxIncludedPrices map[string]string       `json:"tax_included_prices"`
+	IOManager         iomanager.IOManager `json:"-"`
+	TaxRate           float64             `json:"tax_rate"`
+	InputPrices       []float64           `json:"input_prices"`
+	TaxIncludedPrices map[string]string   `json:"tax_included_prices"`
 }
 
 // Constructor
-func NewTaxIncludedPriceJob(fm filemanager.FileManager, taxRate float64) *TaxIncludedPriceJob {
+func NewTaxIncludedPriceJob(iom iomanager.IOManager, taxRate float64) *TaxIncludedPriceJob {
 	return &TaxIncludedPriceJob{
 		InputPrices: []float64{10, 20, 30}, //This isnt mandatory as we eventually load data from a file into the array
 		TaxRate:     taxRate,
-		IOManager:   fm,
+		IOManager:   iom,
 	}
 }
 
@@ -43,7 +43,6 @@ func (job *TaxIncludedPriceJob) Process() {
 		result[fmt.Sprintf("%v", price)] = fmt.Sprintf("%.2f", taxIncludedPrice) //we're storing in string format as opposed to using float64 only so that we can elimnate the redundant decimal places
 	}
 
-	fmt.Println(job.TaxRate, result)
 	job.TaxIncludedPrices = result
 
 	err := job.IOManager.WriteResult(job)
