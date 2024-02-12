@@ -32,9 +32,13 @@ func NewTaxIncludedPriceJob(iom iomanager.IOManager, taxRate float64) *TaxInclud
 // 	}
 // }
 
-func (job *TaxIncludedPriceJob) Process() {
+func (job *TaxIncludedPriceJob) Process() error {
 
-	job.LoadData()
+	err := job.LoadData()
+
+	if err != nil {
+		return err
+	}
 
 	result := make(map[string]string)
 
@@ -45,21 +49,16 @@ func (job *TaxIncludedPriceJob) Process() {
 
 	job.TaxIncludedPrices = result
 
-	err := job.IOManager.WriteResult(job)
+	return job.IOManager.WriteResult(job) //This returns an error and since its the last linein the function, we dont have to handle the error, and return it as it is. If there is no error, itll be nil
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 }
 
-func (job *TaxIncludedPriceJob) LoadData() {
+func (job *TaxIncludedPriceJob) LoadData() error {
 
 	lines, err := job.IOManager.ReadLines()
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	//We wrap the below logic in a new function(Strings to Float) under conversion package
@@ -80,10 +79,10 @@ func (job *TaxIncludedPriceJob) LoadData() {
 	priceData, err := conversion.StringsToFloat(lines)
 
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	job.InputPrices = priceData
+	return nil
 
 }
