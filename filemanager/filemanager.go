@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 )
 
@@ -47,6 +48,12 @@ func (fm FileManager) ReadLines() ([]string, error) {
 
 // any and interface{} are the same
 func (fm FileManager) WriteResult(data any) error {
+
+	//Creates a directory if it doesnt exist
+	if err := os.MkdirAll("results", 0755); err != nil {
+		fmt.Println("Error creating directory:", err)
+		return err
+	}
 	file, err := os.Create(fm.OutputFilePath)
 
 	if err != nil {
