@@ -27,6 +27,8 @@ func (fm FileManager) ReadLines() ([]string, error) {
 		return nil, errors.New("Could not open file")
 	}
 
+	defer file.Close() // It executes at the end, and will execute even in an event where an error occurs.THey are executed even after a return statement. The defer statements are placed on a stack, and they are executed in reverse order (last to first) when the surrounding function returns.
+
 	scanner := bufio.NewScanner(file)
 
 	var lines []string
@@ -38,11 +40,11 @@ func (fm FileManager) ReadLines() ([]string, error) {
 	err = scanner.Err() //After Scan returns false, the Err method will return any error that occurred during scanning, except that if it was io.EOF, Err will return nil.
 
 	if err != nil {
-		file.Close()
+		// file.Close()
 		return nil, errors.New("Reading the file content failed")
 	}
 
-	file.Close()
+	// file.Close()
 	return lines, nil
 }
 
@@ -60,16 +62,26 @@ func (fm FileManager) WriteResult(data any) error {
 		return errors.New("Failed to create file.")
 	}
 
+	defer file.Close() // The defer statements are executed even after a return statement. The defer statements are placed on a stack, and they are executed in reverse order (last to first) when the surrounding function returns.
+
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(data)
 
 	if err != nil {
-		file.Close()
+		// file.Close()
 		return errors.New("Failed to convert data to JSON")
 	}
 
-	file.Close()
+	// file.Close()
 	return nil
+
+	// //OR The below lines of code (using json.Marshal) can also be used instead of using the above approach
+	// jsonData, err := json.Marshal(data) //for the note's fields to be accessible, the fields need to start with capital letters
+
+	// if err != nil {
+	// 	return err
+	// }
+	// return os.WriteFile(fm.OutputFilePath, jsonData, 0644)
 }
 
 // NOTE: Both marshal and NewEncoder are used for encoding Go data structures into JSON format. The main difference between them is the way they handle the output.
