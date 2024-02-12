@@ -36,6 +36,7 @@ func (job *TaxIncludedPriceJob) Process() {
 	fmt.Println(job.TaxRate, result)
 	job.TaxIncludedPrices = result
 
+	//Creates a directory if it doesnt exist
 	if err := os.MkdirAll("results", 0755); err != nil {
 		fmt.Println("Error creating directory:", err)
 		return
