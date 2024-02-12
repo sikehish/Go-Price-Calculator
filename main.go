@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/sikehish/Go-Price-Calculator/filemanager"
+	"github.com/sikehish/Go-Price-Calculator/cmdmanager"
 	"github.com/sikehish/Go-Price-Calculator/prices"
 )
 
@@ -28,10 +26,14 @@ func main() {
 	// }
 	//OR
 	for _, taxRate := range taxRates {
-		fm := filemanager.New("prices.txt", fmt.Sprintf("results/result_%.0f.json", taxRate*100))
-		pricesJob := prices.NewTaxIncludedPriceJob(fm, taxRate)
+
+		// fm := filemanager.New("prices.txt", fmt.Sprintf("results/result_%.0f.json", taxRate*100))
+		// pricesJob := prices.NewTaxIncludedPriceJob(fm, taxRate)
 		//OR
 		// pricesJob := prices.NewTaxIncludedPriceJob(taxRate)
+
+		cmdm := cmdmanager.New()
+		pricesJob := prices.NewTaxIncludedPriceJob(cmdm, taxRate)
 		pricesJob.Process()
 	}
 
