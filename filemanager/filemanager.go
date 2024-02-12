@@ -12,6 +12,13 @@ type FileManager struct {
 	OutputFilePath string
 }
 
+func New(ipPath, opPath string) FileManager {
+	return FileManager{
+		InputFilePath:  ipPath,
+		OutputFilePath: opPath,
+	}
+}
+
 func (fm FileManager) ReadLines() ([]string, error) {
 	file, err := os.Open(fm.InputFilePath)
 
